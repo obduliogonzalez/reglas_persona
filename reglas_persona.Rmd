@@ -1,0 +1,49 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+persona <- read.csv("C:\\Users\\nestor.gonzalez\\Desktop\\Master Gadex\\MAESTRIA USAC\\INTRODUCCION A LA MINERIA DE DATOS\\sabado_5_10\\PERSONA_BDP.csv")
+library(arules)
+
+```
+```{r}
+unique(persona$PEA)
+persona$PEI[is.na(persona$PEI)] <- 0
+
+persona <- persona[, sapply(persona, function(x) length(unique(x)) > 1)]
+
+persona$PEI <- factor(persona$PEI, levels = c(0, 1), labels = c("No", "Yes"))
+persona$PEI <- as.numeric(as.character(persona$PEI))
+
+persona$PEI <- cut(persona$PEI, breaks = c(-Inf, 0, Inf), labels = c("Bajo", "Alto"))
+
+library(arules)
+reglas <- apriori(persona, parameter = list(support = 0.2, confidence = 0.5))
+
+
+```
+```{r}
+
+library(arules)
+# Cargar datos
+#censo_data <- read.csv("ruta/del/archivo.csv")
+# Preprocesamiento y selección de columnas relevantes
+censo_data <- persona[, c("PCP37", "PCP6", "PCP31_D", "PCP17_B")]
+reglas3 <- apriori(censo_data, parameter = list(support = 0.01, confidence = 0.6))
+inspect(head(sort(reglas3, by = "confidence"), 10))
+inspect(head(sort(reglas3, by = "confidence"), 100))
+inspect(reglas3[1:200])
+
+
+```
+
+```{r}
+inspect(reglas[1:500])
+inspect(reglas[500:1000])
+```
+
+
+
